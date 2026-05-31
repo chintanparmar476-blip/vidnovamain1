@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VidNova – Download Any Video Instantly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- AUTH MODALS -->
+<div class="modal-overlay" id="authOverlay" onclick="closeAuthIfOutside(event)">
+  <!-- Sign In -->
+  <div class="auth-modal" id="signinModal">
+    <button class="modal-close" onclick="closeAuth()">×</button>
+    <div class="auth-logo">Vid<span>Nova</span></div>
+    <h2>Welcome back</h2>
+    <p class="auth-sub">Sign in to your account</p>
+    <div class="auth-err" id="signinErr"></div>
+    <div class="auth-field">
+      <label>Email</label>
+      <input type="email" id="si-email" placeholder="you@email.com"/>
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="si-pass" placeholder="••••••••"/>
+    </div>
+    <button class="btn-auth-primary" onclick="doSignIn()">
+      <span>Sign In</span>
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <button class="btn-auth-google" onclick="doGoogleSignIn()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.96l3.007 2.332C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    <p class="auth-switch">No account? <a onclick="showSignup()">Create one →</a></p>
+  </div>
+
+  <!-- Sign Up -->
+  <div class="auth-modal hidden" id="signupModal">
+    <button class="modal-close" onclick="closeAuth()">×</button>
+    <div class="auth-logo">Vid<span>Nova</span></div>
+    <h2>Create account</h2>
+    <p class="auth-sub">Start downloading for free</p>
+    <div class="auth-err" id="signupErr"></div>
+    <div class="auth-field">
+      <label>Full Name</label>
+      <input type="text" id="su-name" placeholder="Chintan Parmar"/>
+    </div>
+    <div class="auth-field">
+      <label>Email</label>
+      <input type="email" id="su-email" placeholder="you@email.com"/>
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="su-pass" placeholder="Min 6 characters"/>
+    </div>
+    <button class="btn-auth-primary" onclick="doSignUp()">
+      <span>Create Account</span>
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <button class="btn-auth-google" onclick="doGoogleSignIn()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.96l3.007 2.332C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    <p class="auth-switch">Have an account? <a onclick="showSignin()">Sign in →</a></p>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentOverlay" onclick="closePaymentIfOutside(event)">
+  <div class="payment-modal" id="paymentModal">
+    <button class="modal-close" onclick="closePayment()">×</button>
+    <div class="pay-header">
+      <div class="pay-plan-badge" id="payPlanBadge">PRO</div>
+      <h2>Complete your upgrade</h2>
+      <p>Premium activates instantly after payment</p>
+    </div>
+    <div class="pay-details" id="payDetails">
+      <div class="pay-row"><span>Plan</span><strong id="payPlanName">Pro</strong></div>
+      <div class="pay-row"><span>Duration</span><strong>3 Months</strong></div>
+      <div class="pay-row"><span>Price</span><strong id="payPrice">₹199/mo</strong></div>
+      <div class="pay-row total"><span>Total</span><strong id="payTotal">₹597</strong></div>
+    </div>
+    <div class="pay-features" id="payFeatures"></div>
+    <a class="btn-pay" id="payBtn" href="#" target="_blank" onclick="handlePayClick()">
+      Pay with Razorpay →
+    </a>
+    <p class="pay-note">After payment, click "I've Paid" below</p>
+    <button class="btn-paid" id="btnIvePaid" onclick="handleIvePaid()" style="display:none">
+      ✅ I've Paid — Activate Premium
+    </button>
+    <div class="pay-secure">🔒 Secured by Razorpay · UPI · Cards · NetBanking</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="logo">Vid<span>Nova</span></a>
+    <div class="nav-links">
+      <a href="#downloader">Download</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user hidden" id="navUser">
+        <div class="user-avatar" id="userAvatar">C</div>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="user-info-drop">
+            <div class="ud-name" id="udName">User</div>
+            <div class="ud-plan" id="udPlan">Free Plan</div>
+          </div>
+          <a onclick="showPricing()" class="ud-link">⚡ Upgrade to Pro</a>
+          <a onclick="doSignOut()" class="ud-link sign-out">Sign Out</a>
+        </div>
+      </div>
+      <div class="nav-auth-btns" id="navAuthBtns">
+        <button class="btn-signin" onclick="showSignin()">Sign In</button>
+        <button class="btn-signup" onclick="showSignup()">Sign Up</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PREMIUM BANNER -->
+<div class="premium-banner hidden" id="premiumBanner">
+  <div class="pb-inner">
+    <span class="pb-badge">⚡ PREMIUM ACTIVE</span>
+    <span id="pbText">Your premium expires on —</span>
+    <button onclick="closePremiumBanner()" class="pb-close">×</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tags">
+      <span class="tag">FREE</span>
+      <span class="dot">·</span>
+      <span class="tag">FAST</span>
+      <span class="dot">·</span>
+      <span class="tag">PRIVATE</span>
+    </div>
+    <h1>Download any video<br/><em>in seconds</em></h1>
+    <p class="hero-sub">Paste a link from YouTube, Instagram, Twitter, TikTok and more</p>
+
+    <!-- DOWNLOADER -->
+    <div class="downloader-wrap" id="downloader">
+      <div class="dl-input-row">
+        <button class="btn-paste" onclick="pasteFromClipboard()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Paste
+        </button>
+        <div class="dl-divider"></div>
+        <input type="url" id="videoUrl" placeholder="https://youtube.com/watch?v=…" autocomplete="off"/>
+        <button class="btn-fetch" onclick="fetchVideo()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Fetch
+        </button>
+      </div>
+      <div class="platform-chips">
+        <span class="chip active">YouTube</span>
+        <span class="chip">Vimeo</span>
+        <span class="chip">Twitter / X</span>
+        <span class="chip">Instagram</span>
+        <span class="chip">Facebook</span>
+        <span class="chip">TikTok</span>
+        <span class="chip muted">+ 50 more</span>
+      </div>
+    </div>
+
+    <!-- RESULT AREA -->
+    <div id="resultArea"></div>
+  </div>
+</section>
+
+<!-- RECENT DOWNLOADS -->
+<section class="recent-section" id="recentSection" style="display:none">
+  <div class="section-inner">
+    <div class="recent-label">Recent downloads</div>
+    <div class="recent-grid" id="recentGrid"></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <div class="section-tag">WHY VIDNOVA</div>
+    <h2>Built for speed &amp; simplicity</h2>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">⚡</div><h3>Lightning Fast</h3><p>No waiting, no queue. Your download starts instantly with our optimised servers.</p></div>
+      <div class="feat-card"><div class="feat-icon">🎯</div><h3>Any Format</h3><p>MP4 in 4K/1080p/720p or clean 320kbps MP3 — your choice every time.</p></div>
+      <div class="feat-card"><div class="feat-icon">📋</div><h3>Full Playlists</h3><p>Download entire YouTube playlists as a ZIP file with one click. Premium feature.</p></div>
+      <div class="feat-card"><div class="feat-icon">🔒</div><h3>No Tracking</h3><p>We don't store your links or personal data. Your privacy is our priority.</p></div>
+      <div class="feat-card"><div class="feat-icon">📱</div><h3>Mobile Ready</h3><p>Works perfectly on any phone, tablet, or desktop browser.</p></div>
+      <div class="feat-card"><div class="feat-icon">🌐</div><h3>10+ Platforms</h3><p>YouTube, Instagram, TikTok, Twitter, Facebook, Vimeo and more.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-inner">
+    <div class="section-tag">HOW IT WORKS</div>
+    <h2>3 steps to your file</h2>
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3>Copy the URL</h3>
+        <p>Go to YouTube (or any supported site) and copy the video or playlist link.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3>Paste &amp; Fetch</h3>
+        <p>Paste the URL into VidNova and choose MP3, MP4, or WebM format.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3>Download</h3>
+        <p>Hit Download and your file is ready in seconds. No sign-up required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-inner">
+    <div class="section-tag">PRICING</div>
+    <h2>Simple, honest pricing</h2>
+    <p class="pricing-sub">Start free. Upgrade when you need more power.</p>
+    <div class="plan-grid">
+
+      <div class="plan-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">₹0<span>/mo</span></div>
+        <ul class="plan-feats">
+          <li class="yes">5 downloads / day</li>
+          <li class="yes">MP4 up to 720p</li>
+          <li class="yes">MP3 128kbps</li>
+          <li class="yes">Single video only</li>
+          <li class="no">No playlist download</li>
+          <li class="no">Ads shown</li>
+          <li class="no">Standard speed</li>
+        </ul>
+        <a href="#downloader" class="plan-btn outline">Start Free</a>
+      </div>
+
+      <div class="plan-card featured">
+        <div class="plan-popular">MOST POPULAR</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">₹199<span>/mo</span></div>
+        <ul class="plan-feats">
+          <li class="yes">Unlimited downloads</li>
+          <li class="yes">MP4 up to 4K</li>
+          <li class="yes">MP3 320kbps</li>
+          <li class="yes">Playlist download (ZIP)</li>
+          <li class="yes">No ads</li>
+          <li class="yes">3× faster speed</li>
+          <li class="yes">Priority support</li>
+        </ul>
+        <button class="plan-btn solid" onclick="startPayment('pro')">Get Pro →</button>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-name">Ultra</div>
+        <div class="plan-price">₹499<span>/mo</span></div>
+        <ul class="plan-feats">
+          <li class="yes">Everything in Pro</li>
+          <li class="yes">Bulk batch downloads</li>
+          <li class="yes">API access</li>
+          <li class="yes">Custom filename templates</li>
+          <li class="yes">Browser extension</li>
+          <li class="yes">Dedicated server</li>
+          <li class="yes">24/7 live support</li>
+        </ul>
+        <button class="plan-btn outline" onclick="startPayment('ultra')">Get Ultra →</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-inner narrow">
+    <div class="section-tag">FAQ</div>
+    <h2>Common questions</h2>
+    <div class="faq-list">
+      <details><summary>Is VidNova free to use?<span class="faq-icon">+</span></summary><p>Yes! The Free plan lets you download 5 videos per day with no sign-up. Upgrade to Pro or Ultra for unlimited downloads.</p></details>
+      <details><summary>Which sites are supported?<span class="faq-icon">+</span></summary><p>YouTube, YouTube Music, Instagram (Reels/Posts), TikTok, Twitter/X, Facebook, Vimeo, Dailymotion, and 50+ more.</p></details>
+      <details><summary>Can I download a full YouTube playlist?<span class="faq-icon">+</span></summary><p>Yes — Pro and Ultra users can download full playlists as a ZIP archive. Free users can download single videos only.</p></details>
+      <details><summary>How long does premium last?<span class="faq-icon">+</span></summary><p>Premium is activated for exactly 3 months from the date of payment and automatically expires after that period.</p></details>
+      <details><summary>How do I pay?<span class="faq-icon">+</span></summary><p>We use Razorpay — you can pay via UPI, PhonePe, Google Pay, credit/debit cards, or NetBanking.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="section-inner narrow">
+    <div class="section-tag">CONTACT</div>
+    <h2>Get in touch</h2>
+    <p class="contact-sub">For premium upgrades, bulk licensing, or any support</p>
+    <div class="contact-cards">
+      <div class="contact-card">
+        <div class="cc-icon">✉️</div>
+        <div class="cc-label">Email</div>
+        <a href="mailto:chintan@vidnova.in">chintan@vidnova.in</a>
+      </div>
+      <div class="contact-card">
+        <div class="cc-icon">💬</div>
+        <div class="cc-label">WhatsApp</div>
+        <a href="https://wa.me/919999999999" target="_blank">+91 99999 99999</a>
+      </div>
+      <div class="contact-card">
+        <div class="cc-icon">🌐</div>
+        <div class="cc-label">Website</div>
+        <a href="#">vidnova.sbs</a>
+      </div>
+    </div>
+    <div class="cform-wrap">
+      <h3>Send a message</h3>
+      <div class="cform">
+        <input type="text" id="cf-name" placeholder="Your name"/>
+        <input type="email" id="cf-email" placeholder="Your email"/>
+        <textarea id="cf-msg" rows="4" placeholder="Your message…"></textarea>
+        <button class="btn-cform" onclick="submitContact()">Send Message →</button>
+        <div id="cf-success"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">Vid<span>Nova</span></span>
+      <p>Made with ❤️ by <strong>Chintan Parmar</strong></p>
+    </div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#contact">Support</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <p class="footer-copy">© 2025 VidNova · All rights reserved</p>
+  </div>
+</footer>
+
+<!-- Firebase SDKs -->
+<script type="module" src="app.js"></script>
+</body>
+</html>
